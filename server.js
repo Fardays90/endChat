@@ -5,8 +5,8 @@ const app = express();
 httpServer = http.createServer(app);
 const io = new Server(httpServer);
 const PORT = 4000;
-
 app.use(express.static('public'));
+app.use('/src', express.static('src'));
 io.on('connect', (socket) => {
     let userName;
     socket.on('username',(username) => {
