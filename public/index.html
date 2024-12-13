@@ -42,7 +42,7 @@
 <body>
     
     <div class="h-40 space-y-10" id="nameDiv">
-        <h1 class="text-white text-4xl font-extralight text-center mt-28" style="z-index: 9999;">Welcome</h1>
+        <h1 class="text-white text-4xl font-extralight text-center mt-28" style="z-index: 9999;">Welcome to the end</h1>
         <form class="flex flex-col w-96  mx-auto space-y-5" id="nameForm">
             <input class="text-center  text-white  p-5  rounded-xl"  required  type="text" spellcheck="false" autocomplete="off" id="name" placeholder="Enter your name">
             <button class="p-3 w-24 self-center rounded-xl hover:scale-110 transition-all duration-300 text-center  hover:text-white" id="submit-btn" type="submit">Confirm</button>
@@ -109,6 +109,17 @@
             messages.appendChild(item);
             messages.scrollTop = messages.scrollHeight; // Auto-scroll to the latest message
         });
+
+        socket.on('userJoined', (str) => {
+            const item = document.createElement('p');
+            item.textContent = str;
+            messages.appendChild(item);
+        })
+        socket.on('userDis', (str) => {
+            const item = document.createElement('p');
+            item.textContent = str;
+            messages.appendChild(item);
+        })
     </script>
 </body>
 </html>

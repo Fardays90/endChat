@@ -12,12 +12,14 @@ io.on('connect', (socket) => {
     socket.on('username',(username) => {
         userName = username;
         console.log(userName+' connected!');
+        io.emit('userJoined', userName+' joined the chat.');
     })
     socket.on('chatMessage', (msg) => {
         io.emit('chatMessage',{userName, msg});
     });
     socket.on('disconnect', () => {
         console.log('a user disconnected');
+        io.emit('userDis', userName+' left the chat.');
     })
 })
 
