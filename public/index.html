@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        #chat { margin: 10px auto; width: 90%; max-width: 600px; }
+        #messages { border: 1px solid #ccc; height: 300px; overflow-y: auto; padding: 10px; }
+        #form { display: flex; margin-top: 10px; }
+        #input { flex: 1; padding: 10px; font-size: 16px; }
+        #send { padding: 10px 20px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div id="nameDiv">
+        <form id="nameForm">
+        <input id="name" placeholder="Enter your name">
+        <button id="submit-btn" type="submit">Confirm</button>
+        </form>
+    </div>
+    <div style="display:none" id="chat">
+        <div>
+    
+        <div id="messages"></div>
+        </div>
+        <form id="form">
+            <input id="input" autocomplete="off" placeholder="Type a message..." />
+            <button id="send">Send</button>
+        </form>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const nameForm = document.getElementById('nameForm');
+        const submitName = document.getElementById('submit-btn');
+        const form = document.getElementById('form');
+        const input = document.getElementById('input');
+        const messages = document.getElementById('messages');
+        let userName;
+
+        nameForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            userName = document.getElementById('name').value;
+            document.getElementById('chat').style.display = '';
+            document.getElementById('nameDiv').style.display = 'none';
+            console.log(userName);
+            socket.emit('username', userName);
+        })
+
+        // Listen for form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const message = input.value.trim();
+            if (message) {
+                socket.emit('chatMessage', message); // Send message to the server
+                input.value = ''; // Clear input field
+            }
+        });
+         
+            
+        socket.on('chatMessage', ({userName, msg}) => {
+            const item = document.createElement('div');
+            item.textContent =userName+": " +  msg;
+            messages.appendChild(item);
+            messages.scrollTop = messages.scrollHeight; // Auto-scroll to the latest message
+        });
+    </script>
+</body>
+</html>
