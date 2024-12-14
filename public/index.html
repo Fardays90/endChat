@@ -120,6 +120,29 @@
             item.textContent = str;
             messages.appendChild(item);
         })
+
+
+        const dmForm = document.createElement('form');
+        dmForm.id = 'dm-form';
+        dmForm.innerHTML = 
+        ` <input id="recipient" placeholder="Recipient's username" />
+            <input id="dm-input" placeholder="Type a direct message..." />
+            <button type="submit">Send DM</button>`
+        document.body.appendChild(dmForm);
+        document.getElementById('dm-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const sendingTo = document.getElementById('recipient').value;
+            const message = document.getElementById('dm-input').value;
+            if(sendingTo && message){
+                socket.emit('dm', {personToSend:sendingTo , msg:message});
+                document.getElementById('dm-input').value = '';
+            }
+        })
+        socket.on('dm', ({from, msg}) => {
+            const item = document.createElement('div');
+            item.textContent = `DM from ${from}: ${msg}`;
+            messages.appendChild(item);
+        })
     </script>
 </body>
 </html>
