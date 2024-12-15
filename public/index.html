@@ -6,12 +6,25 @@
     <title>Chat App</title>
     <link href="/src/output.css" rel="stylesheet">
     <style>
+        
         body{
+            background-color: rgba(0, 0, 0, 1);
+            opacity: 1;
+            background-image: radial-gradient(rgba(25,156,125,1) 1.5px, rgba(0, 0, 0, 1) 1.5px);
+            background-size: 30px 30px;
             /* 47, 6, 195 */
-            background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(25, 156, 125)); 
+            /* background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(25, 156, 125)); 
             background-repeat: no-repeat;
-            background-size: cover;
-            background-attachment: fixed;
+            background-size: cover;*/
+            background-attachment: fixed; 
+        }
+        #DMbtn{
+            background-color: rgba(4, 212, 136, 0.704);
+            backdrop-filter: blur(10px);
+        }
+        #DMbtn:hover{
+            background-color: rgba(4, 61, 67, 0.242);
+            backdrop-filter: blur(10px);
         }
         #name{
             backdrop-filter: blur(10px);
@@ -19,14 +32,14 @@
         }
         #submit-btn{
             background-color: rgba(255, 255, 255, 0.704);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(5px);
         }
         #submit-btn{
-            background-color: rgba(255, 255, 255, 0.704);
+            background-color: rgba(8, 130, 143, 0.242);
             backdrop-filter: blur(10px);
         }
         #submit-btn:hover{
-            background-color: rgba(8, 130, 143, 0.242);
+            background-color: rgba(8, 130, 143, 0.626);
             backdrop-filter: blur(10px);
         }
         input:focus{
@@ -34,14 +47,14 @@
             border:none;
         }
         #chatBox{
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(4px);
             z-index:0;
-            background-color: rgba(41, 228, 207, 0.276);
+            background-color: rgba(41, 228, 206, 0.11);
         }
         #usernameDiv{
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(4px);
             z-index:0;
-            background-color: rgba(41, 228, 207, 0.276);
+            background-color: rgba(41, 228, 207, 0.11);
         }
         #send{
             background-color: rgb(255, 255, 255);
@@ -51,14 +64,19 @@
             background-color: rgba(0, 0, 0, 0.849);
             backdrop-filter: blur(10px);
         }
+        #userModal{
+            backdrop-filter: blur(4px);
+            z-index:0;
+            background-color: rgba(41, 228, 206, 0.11);
+        }
     </style>
 </head>
 <body> 
     <div class="h-40 space-y-10" id="nameDiv">
         <h1 class="text-white text-4xl font-extralight text-center mt-28" style="z-index: 9999;">Welcome to the end</h1>
         <form class="flex flex-col w-96  mx-auto space-y-5" id="nameForm">
-            <input class="text-center  text-white  p-5  rounded-xl"  required  type="text" spellcheck="false" autocomplete="off" id="name" placeholder="Enter your name">
-            <button  style="z-index: 9999;" class="p-3 w-24 self-center rounded-xl hover:scale-110 transition-all duration-300 text-center  hover:text-white" id="submit-btn" type="submit">Confirm</button>
+            <input class="text-center border-2 border-green-700 ease-in duration-300  valid:border-green-700 text-white  p-5 rounded-xl"  required  type="text" spellcheck="false" autocomplete="off" id="name" placeholder="Enter your name">
+            <button  style="z-index: 9999;" class="p-3 w-24 self-center text-white rounded-xl hover:scale-110 transition-all duration-300 text-center  hover:text-white" id="submit-btn" type="submit">Confirm</button>
         </form>
     </div>
     <div id="chat" class="flex justify-between p-5 flex-row w-full ">
@@ -69,10 +87,15 @@
                 <button class="p-3 transition-all duration-300 hover:text-white hover:scale-110 rounded-xl" id="send">Send</button>
             </form>
         </div>
-        <div id="usernameDiv" class="rounded-xl text-white w-72 p-5 h-72 justify-end">
-            <h1 class="text-center">Active users currently</h1>
-            <div id="usersDiv" class="">
+        <div id="usernameDiv" class="rounded-xl  w-72 p-5 h-72 ">
+            <h1 class="text-center text-white">Active users currently</h1>
+            <div id="usersDiv" class="flex flex-col space-y-3 p-3 text-left text-blue-200 ">
             <!-- pop wit js -->
+            </div>
+            <div class="absolute flex flex-col bg-black p-4 space-y-5 rounded-xl" id="userModal" style="display:none">
+                <h1 class="text-lg" id="usernamay">Name of user</h1>
+                <p id="nameOfTheUser"></p>            
+                <button id="DMbtn" class="transition-all duration-300 ease-in-out p-4  text-white rounded-xl">DM</button>
             </div>
         </div>
   </div>
@@ -89,13 +112,9 @@
         let userName;
         nameInput.addEventListener('invalid', (event) => {
             event.preventDefault();
-            nameInput.classList.add('border-4', 'border-red-500'); // Tailwind class for red border
-        });
-
-        // Remove highlight on input
-        nameInput.addEventListener('input', () => {
-            nameInput.classList.remove('border-4', 'border-red-500');
-        });
+            nameInput.classList.remove('border-green-700');
+            nameInput.classList.add('border-red-400');
+        })
         nameForm.addEventListener('submit', (event) => {
             event.preventDefault();
             const userInput = document.getElementById('name').value.trim();
@@ -123,8 +142,10 @@
             userNameBox.innerHTML = '';
             for(let i = 0; i < usernames.length; i++){
                 userP = document.createElement('p');
+                userButton = document.createElement('button');
                 userP.textContent = usernames[i];
-                userNameBox.appendChild(userP);
+                userButton.appendChild(userP);
+                userNameBox.appendChild(userButton);
             }
         })
         socket.on('chatMessage', ({userName, msg}) => {
@@ -146,21 +167,21 @@
         })
 
 
-        document.body.appendChild(dmForm);
-        document.getElementById('dm-form').addEventListener('submit', (event) => {
-            event.preventDefault();
-            const sendingTo = document.getElementById('recipient').value;
-            const message = document.getElementById('dm-input').value;
-            if(sendingTo && message){
-                socket.emit('dm', {personToSend:sendingTo , msg:message});
-                document.getElementById('dm-input').value = '';
-            }
-        })
-        socket.on('dm', ({from, msg}) => {
-            const item = document.createElement('div');
-            item.textContent = `DM from ${from}: ${msg}`;
-            messages.appendChild(item);
-        })
+        // document.body.appendChild(dmForm);
+        // document.getElementById('dm-form').addEventListener('submit', (event) => {
+        //     event.preventDefault();
+        //     const sendingTo = document.getElementById('recipient').value;
+        //     const message = document.getElementById('dm-input').value;
+        //     if(sendingTo && message){
+        //         socket.emit('dm', {personToSend:sendingTo , msg:message});
+        //         document.getElementById('dm-input').value = '';
+        //     }
+        // })
+        // socket.on('dm', ({from, msg}) => {
+        //     const item = document.createElement('div');
+        //     item.textContent = `DM from ${from}: ${msg}`;
+        //     messages.appendChild(item);
+        // })
     </script>
 </body>
 </html>
