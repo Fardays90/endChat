@@ -6,13 +6,9 @@
     <title>Chat App</title>
     <link href="/src/output.css" rel="stylesheet">
     <style>
-        #chat { margin: 10px auto; width: 90%; max-width: 600px; }
-        #messages { border: 1px solid #ccc; height: 300px; overflow-y: auto; padding: 10px; }
-        #form { display: flex; margin-top: 10px; }
-        #input { flex: 1; padding: 10px; font-size: 16px; }
-        #send { padding: 10px 20px; font-size: 16px; }
         body{
-            background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(25, 156, 125));
+            /* 47, 6, 195 */
+            background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(25, 156, 125)); 
             background-repeat: no-repeat;
             background-size: cover;
             background-attachment: fixed;
@@ -37,28 +33,49 @@
             outline:none;
             border:none;
         }
+        #chatBox{
+            backdrop-filter: blur(10px);
+            z-index:0;
+            background-color: rgba(41, 228, 207, 0.276);
+        }
+        #usernameDiv{
+            backdrop-filter: blur(10px);
+            z-index:0;
+            background-color: rgba(41, 228, 207, 0.276);
+        }
+        #send{
+            background-color: rgb(255, 255, 255);
+            backdrop-filter: blur(10px);
+        }
+        #send:hover{
+            background-color: rgba(0, 0, 0, 0.849);
+            backdrop-filter: blur(10px);
+        }
     </style>
 </head>
-<body>
-    
+<body> 
     <div class="h-40 space-y-10" id="nameDiv">
         <h1 class="text-white text-4xl font-extralight text-center mt-28" style="z-index: 9999;">Welcome to the end</h1>
         <form class="flex flex-col w-96  mx-auto space-y-5" id="nameForm">
             <input class="text-center  text-white  p-5  rounded-xl"  required  type="text" spellcheck="false" autocomplete="off" id="name" placeholder="Enter your name">
-            <button class="p-3 w-24 self-center rounded-xl hover:scale-110 transition-all duration-300 text-center  hover:text-white" id="submit-btn" type="submit">Confirm</button>
+            <button  style="z-index: 9999;" class="p-3 w-24 self-center rounded-xl hover:scale-110 transition-all duration-300 text-center  hover:text-white" id="submit-btn" type="submit">Confirm</button>
         </form>
     </div>
-    <div style="display:none" class=" bg-white" id="chat">
-        <div>
-    
-        <div id="messages"></div>
+    <div id="chat" class="flex justify-between p-5 flex-row w-full ">
+        <div class="flex rounded-xl  text-white justify-between p-3 w-[50vw] h-[75vh] flex-col" id="chatBox" >
+            <div class="overflow-auto" id="messages"></div>
+            <form class="sticky flex flex-row justify-between text-black border-t-2 border-white  p-3" id="form">
+                <input id="input" class="bg-transparent text-white" autocomplete="off" placeholder="Type a message..." />
+                <button class="p-3 transition-all duration-300 hover:text-white hover:scale-110 rounded-xl" id="send">Send</button>
+            </form>
         </div>
-        <form id="form">
-            <input id="input" autocomplete="off" placeholder="Type a message..." />
-            <button id="send">Send</button>
-        </form>
-    </div>
-
+        <div id="usernameDiv" class="rounded-xl text-white w-72 p-5 h-72 justify-end">
+            <h1 class="text-center">Active users currently</h1>
+            <div id="usersDiv" class="">
+            <!-- pop wit js -->
+            </div>
+        </div>
+  </div>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
@@ -68,6 +85,7 @@
         const input = document.getElementById('input');
         const nameInput = document.getElementById('name');
         const messages = document.getElementById('messages');
+        const userNameBox = document.getElementById('usersDiv');
         let userName;
         nameInput.addEventListener('invalid', (event) => {
             event.preventDefault();
@@ -101,8 +119,14 @@
                 input.value = ''; // Clear input field
             }
         });
-         
-            
+        socket.on('activeUsers', (usernames) => {
+            userNameBox.innerHTML = '';
+            for(let i = 0; i < usernames.length; i++){
+                userP = document.createElement('p');
+                userP.textContent = usernames[i];
+                userNameBox.appendChild(userP);
+            }
+        })
         socket.on('chatMessage', ({userName, msg}) => {
             const item = document.createElement('div');
             item.textContent =userName+": " +  msg;
@@ -115,19 +139,13 @@
             item.textContent = str;
             messages.appendChild(item);
         })
-        socket.on('userDis', (str) => {
+        socket.on('userDis', ({userName, leavingMsg}) => {
             const item = document.createElement('p');
-            item.textContent = str;
+            item.textContent = leavingMsg;
             messages.appendChild(item);
         })
 
 
-        const dmForm = document.createElement('form');
-        dmForm.id = 'dm-form';
-        dmForm.innerHTML = 
-        ` <input id="recipient" placeholder="Recipient's username" />
-            <input id="dm-input" placeholder="Type a direct message..." />
-            <button type="submit">Send DM</button>`
         document.body.appendChild(dmForm);
         document.getElementById('dm-form').addEventListener('submit', (event) => {
             event.preventDefault();

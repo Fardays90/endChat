@@ -8,20 +8,25 @@ const PORT = 4000;
 app.use(express.static('public'));
 app.use('/src', express.static('src'));
 const users = {};
+let usernames = [];
 io.on('connect', (socket) => {
     let userName;
     socket.on('username',(username) => {
         userName = username;
         console.log(userName+' connected!');
         users[username] = socket.id;
+        usernames.push(username);
         io.emit('userJoined', userName+' joined the chat.');
+        io.emit('activeUsers', usernames);
     })
     socket.on('chatMessage', (msg) => {
         io.emit('chatMessage',{userName, msg});
     });
     socket.on('disconnect', () => {
         console.log('a user disconnected');
-        io.emit('userDis', userName+' left the chat.');
+        usernames = usernames.filter((userleft) => userleft !== userName);
+        io.emit('userDis', {userName  , leavingMsg:`${userName} left the chat`});
+        io.emit('activeUsers', usernames);
     })
     socket.on('dm', ({personToSend, msg }) => {
         const personId = users[personToSend];
