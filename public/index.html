@@ -92,7 +92,7 @@
             <div id="usersDiv" class="flex flex-col space-y-3 p-3 text-left text-blue-200 ">
             <!-- pop wit js -->
             </div>
-            <div class="absolute flex flex-col bg-black p-4 space-y-5 rounded-xl" id="userModal" style="display:none">
+            <div class="absolute flex flex-col bg-black p-4 space-y-5 rounded-xl" id="userModal"  style="display:none">
                 <h1 class="text-lg" id="usernamay">Name of user</h1>
                 <p id="nameOfTheUser"></p>            
                 <button id="DMbtn" class="transition-all duration-300 ease-in-out p-4  text-white rounded-xl">DM</button>
@@ -109,7 +109,9 @@
         const nameInput = document.getElementById('name');
         const messages = document.getElementById('messages');
         const userNameBox = document.getElementById('usersDiv');
+        const userModal = document.getElementById('userModal');
         let userName;
+        let clickedOnUser = false;
         nameInput.addEventListener('invalid', (event) => {
             event.preventDefault();
             nameInput.classList.remove('border-green-700');
@@ -145,7 +147,19 @@
                 userButton = document.createElement('button');
                 userP.textContent = usernames[i];
                 userButton.appendChild(userP);
+                userButton.addEventListener('click' , (event) => {
+                    event.preventDefault();
+                    userModal.style.display = '';
+                })
                 userNameBox.appendChild(userButton);
+            }
+        })
+        document.body.addEventListener('click',(event) => {
+            const clickedOutsideDmBox = userModal.contains(event.target);
+
+
+            if(!clickedOutsideDmBox){
+                userModal.style.display = 'none';
             }
         })
         socket.on('chatMessage', ({userName, msg}) => {
@@ -165,7 +179,6 @@
             item.textContent = leavingMsg;
             messages.appendChild(item);
         })
-
 
         // document.body.appendChild(dmForm);
         // document.getElementById('dm-form').addEventListener('submit', (event) => {
