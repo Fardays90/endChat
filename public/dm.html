@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat app</title>
+    <link rel="stylesheet" href="src/output.css">
+    <style>
+        body{
+            background-color: rgba(0, 0, 0, 1);
+            opacity: 1;
+            background-image: radial-gradient(rgba(25,156,125,1) 1.5px, rgba(0, 0, 0, 1) 1.5px);
+            background-size: 30px 30px;
+            /* 47, 6, 195 */
+            /* background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(25, 156, 125)); 
+            background-repeat: no-repeat;
+            background-size: cover;*/
+            background-attachment: fixed; 
+        }
+        #chatBox{
+            backdrop-filter: blur(4px);
+            z-index:0;
+            background-color: rgba(41, 228, 206, 0.11);
+        }
+        #send{
+            background-color: rgb(255, 255, 255);
+            backdrop-filter: blur(10px);
+        }
+        #send:hover{
+            background-color: rgba(0, 0, 0, 0.849);
+            backdrop-filter: blur(10px);
+        }
+        input:focus{
+            outline:none;
+            border:none;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat" class="flex justify-between p-5 flex-row w-full ">
+        <div class="flex rounded-xl  text-white justify-between p-3 w-[50vw] h-[75vh] flex-col" id="chatBox" >
+            <p id="username" class="text-left text-white text-xl"></p>
+            <div class="overflow-auto" id="messages"></div>
+            <form class="sticky flex flex-row justify-between text-black border-t-2 border-white  p-3" id="form">
+                <input id="input" class="bg-transparent text-white" autocomplete="off" placeholder="Type a message..." />
+                <button class="p-3 transition-all duration-300 hover:text-white hover:scale-110 rounded-xl" id="send">Send</button>
+            </form>
+        </div>
+</body>
+<script>
+    
+</script>
+</html>

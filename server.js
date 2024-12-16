@@ -28,17 +28,10 @@ io.on('connect', (socket) => {
         io.emit('userDis', {userName  , leavingMsg:`${userName} left the chat`});
         io.emit('activeUsers', usernames);
     })
-    socket.on('dm', ({personToSend, msg }) => {
-        const personId = users[personToSend];
-        if(personId){
-            io.to(personId).emit('dm', {
-                from: userName,
-                msg
-            })
-        }
-        else{
-            socket.emit('dm', 'person is not online');
-        }
+    socket.on('dmInstance', ({from , to}) => {
+        let recipient = to;
+        const userToSend = users[recipient];
+        io.to(userToSend).emit('dmInstance', from);
     })
 })
 

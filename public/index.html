@@ -76,12 +76,24 @@
         #userModal.show{
             transform: translateY(0);
         }
+        ::-webkit-scrollbar{
+            width: 7px;
+        }
+        ::-webkit-scrollbar-thumb{
+            background: rgb(4, 99, 44);
+            border-radius:10px;
+        }
+        #dmReqBox{
+            backdrop-filter: blur(4px);
+            z-index:0;
+            background-color: rgba(41, 228, 206, 0.11);
+        }
     </style>
 </head>
 <body> 
     <div class="h-40 space-y-10" id="nameDiv">
         <h1 class="text-white text-4xl font-extralight text-center mt-28" style="z-index: 9999;">Welcome to the end</h1>
-        <form class="flex flex-col w-96  mx-auto space-y-5" id="nameForm">
+        <form class="flex flex-col w-96  md:mx-auto space-y-5" id="nameForm">
             <input class="text-center border-2 border-green-700 ease-in duration-300  valid:border-green-700 text-white  p-5 rounded-xl"  required  type="text" spellcheck="false" autocomplete="off" id="name" placeholder="Enter your name">
             <button  style="z-index: 9999;" class="p-3 w-24 self-center text-white rounded-xl hover:scale-110 transition-all duration-300 text-center  hover:text-white" id="submit-btn" type="submit">Confirm</button>
         </form>
@@ -99,10 +111,19 @@
                 <button class="p-3 transition-all duration-300 hover:text-white hover:scale-110 rounded-xl" id="send">Send</button>
             </form>
         </div>
-        <div id="usernameDiv" class="rounded-xl  w-72 p-5 h-72 ">
-            <h1 class="text-center text-white">Active users currently</h1>
-            <div id="usersDiv" class="flex flex-col space-y-3 p-3 text-left text-blue-200 ">
-            <!-- pop wit js -->
+        <div class="flex flex-col justify-between">
+            <div id="usernameDiv" class="rounded-xl flex flex-col  w-72 p-5 h-72 ">
+                <h1 class="text-center text-white">Active users currently</h1>
+                <div id="usersDiv" class="flex flex-col space-y-3 p-3 text-left text-blue-200 ">
+                <!-- pop wit js -->
+                </div>
+                <p class="text-white text-center mt-auto">Click on username to DM someone</p>
+            </div>
+            <div id="dmReqBox" class="flex flex-col p-5 rounded-xl" >
+                <h1 class="text-center text-white">DM requests</h1>
+                <div id="dmReqs" class="flex flex-col">
+
+                </div>
             </div>
         </div>
   </div>
@@ -118,6 +139,7 @@
         const userNameBox = document.getElementById('usersDiv');
         const userModal = document.getElementById('userModal');
         const nameOfUserP = document.getElementById('nameOfTheUser');
+        const dmbtn = document.getElementById('DMbtn'); 
         let userName;
         let clickedOnUser = false;
         nameInput.addEventListener('invalid', (event) => {
@@ -210,22 +232,31 @@
             item.textContent = leavingMsg;
             messages.appendChild(item);
         })
-
-        // document.body.appendChild(dmForm);
-        // document.getElementById('dm-form').addEventListener('submit', (event) => {
-        //     event.preventDefault();
-        //     const sendingTo = document.getElementById('recipient').value;
-        //     const message = document.getElementById('dm-input').value;
-        //     if(sendingTo && message){
-        //         socket.emit('dm', {personToSend:sendingTo , msg:message});
-        //         document.getElementById('dm-input').value = '';
-        //     }
-        // })
-        // socket.on('dm', ({from, msg}) => {
-        //     const item = document.createElement('div');
-        //     item.textContent = `DM from ${from}: ${msg}`;
-        //     messages.appendChild(item);
-        // })
+        dmbtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            window.location.href = 'dm.html';
+            socket.emit('dmInstance', {from:userName, to:document.getElementById('nameOfTheUser').textContent})
+        })
+        socket.on('dmInstance', (str) => {
+            const reqBox = document.createElement('div');
+            const buttonBox = document.createElement('div');
+            buttonBox.classList.add('flex', 'flex-row');
+            reqBox.classList.add('flex', 'flex-row', 'justify-between')
+            const dmFrom = document.createElement('p');
+            dmFrom.classList.add('text-white')
+            dmFrom.textContent = str;
+            const accept = document.createElement('button');
+            const reject = document.createElement('button');
+            accept.textContent = 'Accept';
+            reject.textContent = 'Reject';
+            accept.classList.add('p-2', 'text-white','bg-green-500', 'rounded-xl','text-sm');
+            reject.classList.add('p-2', 'text-white','bg-red-500', 'rounded-xl','text-sm');
+            buttonBox.appendChild(accept);
+            buttonBox.appendChild(reject);
+            reqBox.appendChild(dmFrom);
+            reqBox.appendChild(buttonBox);
+            document.getElementById('dmReqs').appendChild(reqBox);
+        })
     </script>
 </body>
 </html>
