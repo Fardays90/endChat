@@ -94,7 +94,7 @@
     <div class="h-40 space-y-10" id="nameDiv">
         <h1 class="text-white text-4xl font-extralight text-center mt-28" style="z-index: 9999;">Welcome to the end</h1>
         <form class="flex flex-col w-96  md:mx-auto space-y-5" id="nameForm">
-            <input class="text-center border-2 border-green-700 ease-in duration-300  valid:border-green-700 text-white  p-5 rounded-xl"  required  type="text" spellcheck="false" autocomplete="off" id="name" placeholder="Enter your name">
+            <input class="text-center border-2 border-green-700 ease-in duration-300  valid:border-green-700 text-white  p-5 rounded-xl"  required maxlength="12"  type="text" spellcheck="false" autocomplete="off" id="name" placeholder="Enter your name">
             <button  style="z-index: 9999;" class="p-3 w-24 self-center text-white rounded-xl hover:scale-110 transition-all duration-300 text-center  hover:text-white" id="submit-btn" type="submit">Confirm</button>
         </form>
     </div>
@@ -157,6 +157,7 @@
                 document.getElementById('chat').style.display = '';
                 document.getElementById('nameDiv').style.display = 'none';
                 console.log(userName);
+                sessionStorage.setItem('username', userName);
                 socket.emit('username', userName);
             }
         })
@@ -234,7 +235,6 @@
         })
         dmbtn.addEventListener('click', (event) => {
             event.preventDefault();
-            window.location.href = 'dm.html';
             socket.emit('dmInstance', {from:userName, to:document.getElementById('nameOfTheUser').textContent})
         })
         socket.on('dmInstance', (str) => {
@@ -252,12 +252,31 @@
             reject.textContent = 'Reject';
             accept.classList.add('p-2', 'text-white','bg-green-500', 'rounded-xl','text-sm');
             reject.classList.add('p-2', 'text-white','bg-red-500', 'rounded-xl','text-sm');
+            accept.addEventListener('click' , () => {
+                socket.emit('dmAcceptedRecipient', {from:str, to:userName});
+                setTimeout(() => {
+                    window.location.href = 'dm.html';
+                }, 4000);
+            })
+            reject.addEventListener('click', () => {
+                socket.emit('dmRejected', {from:str, to:userName});
+            })
             buttonBox.appendChild(accept);
             buttonBox.appendChild(reject);
             reqBox.appendChild(dmFrom);
             reqBox.appendChild(buttonBox);
             document.getElementById('dmReqs').appendChild(reqBox);
         })
+        socket.on('dmRejected', (str) => {
+            const item = document.createElement('p');
+            item.textContent = str;
+            messages.appendChild(item);
+        })
+        socket.on('dmAccepted', ({room , to}) => {
+            socket.emit('dmAcceptedSender', room);
+            sessionStorage.setItem('room',room);
+            window.location.href = 'dm.html';
+        });
     </script>
 </body>
 </html>

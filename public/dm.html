@@ -17,7 +17,7 @@
             background-size: cover;*/
             background-attachment: fixed; 
         }
-        #chatBox{
+        #privchatBox{
             backdrop-filter: blur(4px);
             z-index:0;
             background-color: rgba(41, 228, 206, 0.11);
@@ -37,17 +37,35 @@
     </style>
 </head>
 <body>
-    <div id="chat" class="flex justify-between p-5 flex-row w-full ">
-        <div class="flex rounded-xl  text-white justify-between p-3 w-[50vw] h-[75vh] flex-col" id="chatBox" >
+    <div id="privchat" class="flex justify-between p-5 flex-row w-full ">
+        <div class="flex rounded-xl  text-white justify-between p-3 w-[50vw] h-[75vh] flex-col" id="privchatBox" >
             <p id="username" class="text-left text-white text-xl"></p>
-            <div class="overflow-auto" id="messages"></div>
+            <div class="overflow-auto" id="privMsgs"></div>
             <form class="sticky flex flex-row justify-between text-black border-t-2 border-white  p-3" id="form">
                 <input id="input" class="bg-transparent text-white" autocomplete="off" placeholder="Type a message..." />
                 <button class="p-3 transition-all duration-300 hover:text-white hover:scale-110 rounded-xl" id="send">Send</button>
             </form>
         </div>
 </body>
+<script src="/socket.io/socket.io.js"></script>
 <script>
-    
+    const socket = io();
+    const room = sessionStorage.getItem('room');
+    const messages = document.getElementById('privMsgs');
+    const userName = sessionStorage.getItem('username');
+    socket.emit('joinroom', room);
+    document.getElementById('form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const msg = document.getElementById('input').value;
+        socket.emit('privateMsg', ({room, message:msg, sender:userName}));
+        document.getElementById('input').value = '';  
+    });
+    socket.on('privateMsg', ({sender, message}) => {
+        const item = document.createElement('p');
+        item.textContent = `${sender}: ${message}`;
+        messages.appendChild(item);
+        messages.scrollTop = messages.scrollHeight;
+    })
+
 </script>
 </html>

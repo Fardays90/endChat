@@ -33,7 +33,32 @@ io.on('connect', (socket) => {
         const userToSend = users[recipient];
         io.to(userToSend).emit('dmInstance', from);
     })
+    socket.on('dmAcceptedRecipient', ({from, to}) => {
+        const senderSocketId = users[from];
+        const toSocketId = users[to];
+        const room = `${from}-${to}`;
+        if(senderSocketId && toSocketId){
+            socket.join(room);
+            io.to(senderSocketId).emit('dmAccepted',{room:room , to:to});
+            io.to(toSocketId).emit('dmAccepted',{room, from:from});
+        }
+    })
+    socket.on('dmAcceptedSender', (room) => {
+        socket.join(room);
+    })
+    socket.on('dmRejected', ({from ,to}) => {
+        const senderSocketId = users[from];
+        io.to(senderSocketId).emit('dmRejected', `${to} rejected your dm request.`);
+    })
+    socket.on('privateMsg', ({room, message, sender}) => {
+        io.to(room).emit('privateMsg', {sender, message});
+    })
+    socket.on('joinroom', (room) => {
+        socket.join(room);
+        console.log(`${socket.id} joined room: ${room}`);
+    });
 })
+
 
 httpServer.listen(PORT, () => {
     console.log(`server started running on http://localhost:${PORT}`);
