@@ -38,13 +38,9 @@ io.on('connect', (socket) => {
         const toSocketId = users[to];
         const room = `${from}-${to}`;
         if(senderSocketId && toSocketId){
-            socket.join(room);
-            io.to(senderSocketId).emit('dmAccepted',{room:room , to:to});
-            io.to(toSocketId).emit('dmAccepted',{room, from:from});
+            io.to(senderSocketId).emit('dmAccepted',{room, to});
+            io.to(toSocketId).emit('dmAccepted',{room, from});
         }
-    })
-    socket.on('dmAcceptedSender', (room) => {
-        socket.join(room);
     })
     socket.on('dmRejected', ({from ,to}) => {
         const senderSocketId = users[from];
