@@ -11,4 +11,4 @@ Technologies Used
 Node.js: JavaScript runtime environment.
 Express: Web application framework for Node.js.
 Socket.io: Library for real-time web communication.
-HTML/CSS: Front-end structure and styling.
+HTML/CSS and TailwindCSS: Front-end structure and styling.
