@@ -254,9 +254,6 @@
             reject.classList.add('p-2', 'text-white','bg-red-500', 'rounded-xl','text-sm');
             accept.addEventListener('click' , () => {
                 socket.emit('dmAcceptedRecipient', {from:str, to:userName});
-                setTimeout(() => {
-                    window.location.href = 'dm.html';
-                }, 4000);
             })
             reject.addEventListener('click', () => {
                 socket.emit('dmRejected', {from:str, to:userName});
@@ -272,7 +269,7 @@
             item.textContent = str;
             messages.appendChild(item);
         })
-        socket.on('dmAccepted', ({room , to}) => {
+        socket.on('dmAccepted', ({room}) => {
             socket.emit('dmAcceptedSender', room);
             sessionStorage.setItem('room',room);
             window.location.href = 'dm.html';
