@@ -37,9 +37,9 @@
     </style>
 </head>
 <body>
-    <div id="privchat" class="flex justify-between p-5 flex-row w-full ">
+    <div id="privchat" class="flex flex-col space-y-4 md:space-y-0 justify-between p-5 md:flex-row w-full ">
         <p id="roomName" class="text-left  text-white text-2xl font-extralight"></p>
-        <div class="flex rounded-xl  text-white justify-between p-3 w-[50vw] h-[75vh] flex-col" id="privchatBox" > 
+        <div class="flex rounded-xl  text-white justify-between p-3 w-full md:w-[50vw] h-[75vh] flex-col" id="privchatBox" > 
             <div class="overflow-auto" id="privMsgs"></div>
             <form class="sticky flex flex-row justify-between text-black border-t-2 border-white  p-3" id="form">
                 <input id="input" class="bg-transparent text-white" autocomplete="off" placeholder="Type a message..." />
