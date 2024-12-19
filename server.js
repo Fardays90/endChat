@@ -4,7 +4,7 @@ const http = require('http');
 const app = express();
 httpServer = http.createServer(app);
 const io = new Server(httpServer);
-const PORT = 8000;
+const PORT = 4000;
 app.use(express.static('public'));
 app.use('/src', express.static('src'));
 const users = {};
