@@ -120,7 +120,7 @@
         <div class="flex rounded-xl  text-white justify-between p-3 w-full md:w-[50vw] h-[75vh] flex-col" id="chatBox" >
             <div class="overflow-auto" id="messages"></div>
             <form class="sticky flex flex-row justify-between text-black border-t-2 border-white  p-3" id="form">
-                <input id="input" class="bg-transparent text-white" autocomplete="off" placeholder="Type a message..." />
+                <input id="input" class="bg-transparent w-full  text-white" autocomplete="off" placeholder="Type a message..." />
                 <button class="p-3 transition-all duration-300 hover:text-white hover:scale-110 rounded-xl" id="send">Send</button>
             </form>
         </div>
@@ -265,12 +265,16 @@
             reject.textContent = 'Reject';
             accept.classList.add('p-2', 'text-white','bg-green-500', 'rounded-xl','text-sm');
             reject.classList.add('p-2', 'text-white','bg-red-500', 'rounded-xl','text-sm');
+            dmFrom.id = `${str}`;
+            buttonBox.id = `${str}+buttons`;
             accept.addEventListener('click' , () => {
                 socket.emit('dmAcceptedRecipient', {from:str, to:userName});
             })
             reject.addEventListener('click', () => {
                 socket.emit('dmRejected', {from:str, to:userName});
-            })
+                document.getElementById(`${str}`).innerHTML = '';
+                document.getElementById(`${str}+buttons`).innerHTML = '';
+            });
             buttonBox.appendChild(accept);
             buttonBox.appendChild(reject);
             reqBox.appendChild(dmFrom);
@@ -279,6 +283,7 @@
         })
         socket.on('dmRejected', (str) => {
             const item = document.createElement('p');
+            document.getElementById('requestFrom');
             item.textContent = str;
             messages.appendChild(item);
         })
