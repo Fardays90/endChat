@@ -252,6 +252,7 @@
         })
         socket.on('dmInstance', (str) => {
             const reqBox = document.createElement('div');
+            reqBox.id = `${str}`;
             const buttonBox = document.createElement('div');
             buttonBox.classList.add('flex', 'flex-row','space-x-5');
             reqBox.classList.add('flex', 'flex-row', 'justify-between');
@@ -265,15 +266,13 @@
             reject.textContent = 'Reject';
             accept.classList.add('p-2', 'text-white','bg-green-500', 'rounded-xl','text-sm');
             reject.classList.add('p-2', 'text-white','bg-red-500', 'rounded-xl','text-sm');
-            dmFrom.id = `${str}`;
             buttonBox.id = `${str}+buttons`;
             accept.addEventListener('click' , () => {
                 socket.emit('dmAcceptedRecipient', {from:str, to:userName});
             })
             reject.addEventListener('click', () => {
                 socket.emit('dmRejected', {from:str, to:userName});
-                document.getElementById(`${str}`).innerHTML = '';
-                document.getElementById(`${str}+buttons`).innerHTML = '';
+                document.getElementById(`${str}`).remove()
             });
             buttonBox.appendChild(accept);
             buttonBox.appendChild(reject);
